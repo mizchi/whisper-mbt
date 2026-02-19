@@ -1,4 +1,4 @@
-#include "../../include/whisper.h"
+#include "include/whisper.h"
 #include <moonbit.h>
 #include <stdio.h>
 #include <string.h>

@@ -8,7 +8,7 @@ options(
   "is-main": true,
   link: {
     "native": {
-      "cc-link-flags": "/Users/mz/ghq/github.com/mizchi/whisper-mbt/vendor/whisper.cpp/build/src/libwhisper.a /Users/mz/ghq/github.com/mizchi/whisper-mbt/vendor/whisper.cpp/build/ggml/src/libggml.a /Users/mz/ghq/github.com/mizchi/whisper-mbt/vendor/whisper.cpp/build/ggml/src/libggml-base.a /Users/mz/ghq/github.com/mizchi/whisper-mbt/vendor/whisper.cpp/build/ggml/src/libggml-cpu.a /Users/mz/ghq/github.com/mizchi/whisper-mbt/vendor/whisper.cpp/build/ggml/src/ggml-metal/libggml-metal.a /Users/mz/ghq/github.com/mizchi/whisper-mbt/vendor/whisper.cpp/build/ggml/src/ggml-blas/libggml-blas.a -lstdc++ -framework Accelerate -framework Metal -framework Foundation -framework MetalKit",
+      "cc-link-flags": "vendor/whisper.cpp/build/src/libwhisper.a vendor/whisper.cpp/build/ggml/src/libggml.a vendor/whisper.cpp/build/ggml/src/libggml-base.a vendor/whisper.cpp/build/ggml/src/libggml-cpu.a vendor/whisper.cpp/build/ggml/src/ggml-metal/libggml-metal.a vendor/whisper.cpp/build/ggml/src/ggml-blas/libggml-blas.a -lstdc++ -framework Accelerate -framework Metal -framework Foundation -framework MetalKit",
     },
   },
   "supported-targets": [ "native" ],
