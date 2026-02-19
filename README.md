@@ -27,8 +27,24 @@ WHISPER_WAV=vendor/whisper.cpp/samples/jfk.wav \
 
 ### 1. Add the package
 
+From mooncakes registry (when published):
+
 ```bash
 moon add mizchi/whisper-mbt
+```
+
+Or as a local path dependency in `moon.mod.json`:
+
+```json
+{
+  "name": "your/project",
+  "deps": {
+    "mizchi/whisper-mbt": {
+      "path": "/path/to/whisper-mbt"
+    }
+  },
+  "preferred-target": "native"
+}
 ```
 
 ### 2. Build whisper.cpp
@@ -55,10 +71,10 @@ cmake --build build --config Release -j$(nproc)
 
 ### 3. Configure your main package
 
-In your main package's `moon.pkg`, add link flags pointing to the built libraries:
+In your main package's `moon.pkg`, import the library and add link flags pointing to the whisper.cpp build:
 
 ```
-// src/main/moon.pkg
+// cmd/main/moon.pkg
 import {
   "mizchi/whisper-mbt" @whisper,
 }
@@ -75,11 +91,13 @@ options(
 )
 ```
 
-For Linux (CPU only), the link flags are simpler:
+For Linux (CPU only):
 
 ```
 "cc-link-flags": "/path/to/whisper.cpp/build/src/libwhisper.a /path/to/whisper.cpp/build/ggml/src/libggml.a /path/to/whisper.cpp/build/ggml/src/libggml-base.a /path/to/whisper.cpp/build/ggml/src/libggml-cpu.a -lstdc++ -lm -lpthread"
 ```
+
+Note: `cc-link-flags` requires absolute paths or paths relative to the project root where `moon build` is invoked.
 
 ### 4. Download a model
 
