@@ -5,5 +5,10 @@
     "moonbitlang/x": "0.4.40"
   },
   "source": "src",
-  "preferred-target": "native"
+  "preferred-target": "native",
+  "readme": "README.md",
+  "repository": "https://github.com/mizchi/whisper-mbt",
+  "license": "MIT",
+  "keywords": ["whisper", "speech-to-text", "native", "ffi"],
+  "description": "MoonBit native bindings for whisper.cpp speech-to-text inference"
 }
