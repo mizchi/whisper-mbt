@@ -1,0 +1,9 @@
+import {
+  "moonbitlang/x/encoding",
+}
+
+options(
+  "native-stub": [ "whisper_stub.c" ],
+  "supported-targets": [ "native" ],
+  targets: { "ffi.mbt": [ "native" ] },
+)

@@ -1,0 +1,7 @@
+import {
+  "mizchi/whisper-mbt/ffi",
+}
+
+options(
+  "supported-targets": [ "native" ],
+)
