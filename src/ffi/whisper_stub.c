@@ -225,6 +225,12 @@ int32_t whisper_run_full(struct whisper_context* ctx, struct whisper_full_params
     return whisper_full(ctx, *params, samples->data, samples->count);
 }
 
+int32_t whisper_run_full_parallel(struct whisper_context* ctx, struct whisper_full_params* params, wav_samples_t* samples, int32_t n_processors) {
+    if (!ctx || !params || !samples || !samples->data) return -1;
+    if (n_processors < 1) n_processors = 1;
+    return whisper_full_parallel(ctx, *params, samples->data, samples->count, n_processors);
+}
+
 int32_t whisper_get_n_segments(struct whisper_context* ctx) {
     return whisper_full_n_segments(ctx);
 }
@@ -240,6 +246,222 @@ int64_t whisper_get_segment_t0(struct whisper_context* ctx, int32_t i) {
 
 int64_t whisper_get_segment_t1(struct whisper_context* ctx, int32_t i) {
     return whisper_full_get_segment_t1(ctx, i);
+}
+
+// --- Group 1: Params setters ---
+
+void whisper_params_set_offset_ms(struct whisper_full_params* p, int32_t val) {
+    p->offset_ms = val;
+}
+
+void whisper_params_set_duration_ms(struct whisper_full_params* p, int32_t val) {
+    p->duration_ms = val;
+}
+
+void whisper_params_set_no_timestamps(struct whisper_full_params* p, int32_t val) {
+    p->no_timestamps = val != 0;
+}
+
+void whisper_params_set_single_segment(struct whisper_full_params* p, int32_t val) {
+    p->single_segment = val != 0;
+}
+
+void whisper_params_set_token_timestamps(struct whisper_full_params* p, int32_t val) {
+    p->token_timestamps = val != 0;
+}
+
+void whisper_params_set_max_len(struct whisper_full_params* p, int32_t val) {
+    p->max_len = val;
+}
+
+void whisper_params_set_max_tokens(struct whisper_full_params* p, int32_t val) {
+    p->max_tokens = val;
+}
+
+void whisper_params_set_audio_ctx(struct whisper_full_params* p, int32_t val) {
+    p->audio_ctx = val;
+}
+
+void whisper_params_set_initial_prompt(struct whisper_full_params* p, moonbit_bytes_t prompt) {
+    static char prompt_buffer[4096];
+    char* tmp = bytes_to_cstring(prompt);
+    strncpy(prompt_buffer, tmp, sizeof(prompt_buffer) - 1);
+    prompt_buffer[sizeof(prompt_buffer) - 1] = '\0';
+    free(tmp);
+    p->initial_prompt = prompt_buffer;
+}
+
+void whisper_params_set_temperature(struct whisper_full_params* p, double val) {
+    p->temperature = (float)val;
+}
+
+void whisper_params_set_print_progress(struct whisper_full_params* p, int32_t val) {
+    p->print_progress = val != 0;
+}
+
+void whisper_params_set_strategy(struct whisper_full_params* p, int32_t val) {
+    p->strategy = (enum whisper_sampling_strategy)val;
+}
+
+void whisper_params_set_beam_size(struct whisper_full_params* p, int32_t val) {
+    p->beam_search.beam_size = val;
+}
+
+void whisper_params_set_no_context(struct whisper_full_params* p, int32_t val) {
+    p->no_context = val != 0;
+}
+
+void whisper_params_set_vad(struct whisper_full_params* p, int32_t val) {
+    p->vad = val != 0;
+}
+
+void whisper_params_set_vad_model_path(struct whisper_full_params* p, moonbit_bytes_t path) {
+    static char vad_path_buffer[4096];
+    char* tmp = bytes_to_cstring(path);
+    strncpy(vad_path_buffer, tmp, sizeof(vad_path_buffer) - 1);
+    vad_path_buffer[sizeof(vad_path_buffer) - 1] = '\0';
+    free(tmp);
+    p->vad_model_path = vad_path_buffer;
+}
+
+void whisper_params_set_vad_threshold(struct whisper_full_params* p, double val) {
+    p->vad_params.threshold = (float)val;
+}
+
+void whisper_params_set_vad_min_speech_duration_ms(struct whisper_full_params* p, int32_t val) {
+    p->vad_params.min_speech_duration_ms = val;
+}
+
+void whisper_params_set_vad_min_silence_duration_ms(struct whisper_full_params* p, int32_t val) {
+    p->vad_params.min_silence_duration_ms = val;
+}
+
+void whisper_params_set_vad_max_speech_duration_s(struct whisper_full_params* p, double val) {
+    p->vad_params.max_speech_duration_s = (float)val;
+}
+
+void whisper_params_set_vad_speech_pad_ms(struct whisper_full_params* p, int32_t val) {
+    p->vad_params.speech_pad_ms = val;
+}
+
+// --- Group 2: Model info / metadata ---
+
+int32_t whisper_ctx_is_multilingual(struct whisper_context* ctx) {
+    return whisper_is_multilingual(ctx);
+}
+
+int32_t whisper_ctx_n_vocab(struct whisper_context* ctx) {
+    return whisper_n_vocab(ctx);
+}
+
+int32_t whisper_ctx_n_text_ctx(struct whisper_context* ctx) {
+    return whisper_n_text_ctx(ctx);
+}
+
+int32_t whisper_ctx_n_audio_ctx(struct whisper_context* ctx) {
+    return whisper_n_audio_ctx(ctx);
+}
+
+moonbit_bytes_t whisper_ctx_model_type(struct whisper_context* ctx) {
+    const char* s = whisper_model_type_readable(ctx);
+    return cstring_to_bytes(s);
+}
+
+int32_t whisper_ctx_lang_max_id(void) {
+    return whisper_lang_max_id();
+}
+
+int32_t whisper_ctx_lang_id(moonbit_bytes_t lang) {
+    char* s = bytes_to_cstring(lang);
+    int32_t id = whisper_lang_id(s);
+    free(s);
+    return id;
+}
+
+moonbit_bytes_t whisper_ctx_lang_str(int32_t id) {
+    const char* s = whisper_lang_str(id);
+    return cstring_to_bytes(s);
+}
+
+// --- Group 3: Segment details / token info ---
+
+double whisper_get_segment_no_speech_prob(struct whisper_context* ctx, int32_t i) {
+    return (double)whisper_full_get_segment_no_speech_prob(ctx, i);
+}
+
+int32_t whisper_get_segment_speaker_turn(struct whisper_context* ctx, int32_t i) {
+    return whisper_full_get_segment_speaker_turn_next(ctx, i) ? 1 : 0;
+}
+
+int32_t whisper_get_full_lang_id(struct whisper_context* ctx) {
+    return whisper_full_lang_id(ctx);
+}
+
+int32_t whisper_get_n_tokens(struct whisper_context* ctx, int32_t i_segment) {
+    return whisper_full_n_tokens(ctx, i_segment);
+}
+
+moonbit_bytes_t whisper_get_token_text(struct whisper_context* ctx, int32_t i_segment, int32_t i_token) {
+    const char* s = whisper_full_get_token_text(ctx, i_segment, i_token);
+    return cstring_to_bytes(s);
+}
+
+int32_t whisper_get_token_id(struct whisper_context* ctx, int32_t i_segment, int32_t i_token) {
+    return (int32_t)whisper_full_get_token_id(ctx, i_segment, i_token);
+}
+
+double whisper_get_token_prob(struct whisper_context* ctx, int32_t i_segment, int32_t i_token) {
+    return (double)whisper_full_get_token_p(ctx, i_segment, i_token);
+}
+
+int64_t whisper_get_token_data_t0(struct whisper_context* ctx, int32_t i_segment, int32_t i_token) {
+    whisper_token_data data = whisper_full_get_token_data(ctx, i_segment, i_token);
+    return data.t0;
+}
+
+int64_t whisper_get_token_data_t1(struct whisper_context* ctx, int32_t i_segment, int32_t i_token) {
+    whisper_token_data data = whisper_full_get_token_data(ctx, i_segment, i_token);
+    return data.t1;
+}
+
+// --- Group 4: Performance / utility ---
+
+void whisper_ctx_print_timings(struct whisper_context* ctx) {
+    whisper_print_timings(ctx);
+}
+
+void whisper_ctx_reset_timings(struct whisper_context* ctx) {
+    whisper_reset_timings(ctx);
+}
+
+double whisper_ctx_get_timings_sample_ms(struct whisper_context* ctx) {
+    struct whisper_timings* t = whisper_get_timings(ctx);
+    return t ? (double)t->sample_ms : 0.0;
+}
+
+double whisper_ctx_get_timings_encode_ms(struct whisper_context* ctx) {
+    struct whisper_timings* t = whisper_get_timings(ctx);
+    return t ? (double)t->encode_ms : 0.0;
+}
+
+double whisper_ctx_get_timings_decode_ms(struct whisper_context* ctx) {
+    struct whisper_timings* t = whisper_get_timings(ctx);
+    return t ? (double)t->decode_ms : 0.0;
+}
+
+double whisper_ctx_get_timings_batchd_ms(struct whisper_context* ctx) {
+    struct whisper_timings* t = whisper_get_timings(ctx);
+    return t ? (double)t->batchd_ms : 0.0;
+}
+
+double whisper_ctx_get_timings_prompt_ms(struct whisper_context* ctx) {
+    struct whisper_timings* t = whisper_get_timings(ctx);
+    return t ? (double)t->prompt_ms : 0.0;
+}
+
+moonbit_bytes_t whisper_get_system_info(void) {
+    const char* s = whisper_print_system_info();
+    return cstring_to_bytes(s);
 }
 
 // --- Environment variable access ---

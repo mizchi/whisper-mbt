@@ -82,6 +82,15 @@ extern "C" fn whisper_run_full(
 ) -> Int = "whisper_run_full"
 
 ///|
+#borrow(ctx, params, samples)
+extern "C" fn whisper_run_full_parallel(
+  ctx : WhisperCtx,
+  params : WhisperParams,
+  samples : WavSamples,
+  n_processors : Int,
+) -> Int = "whisper_run_full_parallel"
+
+///|
 #borrow(ctx)
 extern "C" fn whisper_get_n_segments(ctx : WhisperCtx) -> Int = "whisper_get_n_segments"
 
@@ -96,6 +105,287 @@ extern "C" fn whisper_get_segment_t0(ctx : WhisperCtx, i : Int) -> Int64 = "whis
 ///|
 #borrow(ctx)
 extern "C" fn whisper_get_segment_t1(ctx : WhisperCtx, i : Int) -> Int64 = "whisper_get_segment_t1"
+
+// --- Group 1: Params setters ---
+
+///|
+#borrow(params)
+extern "C" fn whisper_params_set_offset_ms(
+  params : WhisperParams,
+  val : Int,
+) -> Unit = "whisper_params_set_offset_ms"
+
+///|
+#borrow(params)
+extern "C" fn whisper_params_set_duration_ms(
+  params : WhisperParams,
+  val : Int,
+) -> Unit = "whisper_params_set_duration_ms"
+
+///|
+#borrow(params)
+extern "C" fn whisper_params_set_no_timestamps(
+  params : WhisperParams,
+  val : Int,
+) -> Unit = "whisper_params_set_no_timestamps"
+
+///|
+#borrow(params)
+extern "C" fn whisper_params_set_single_segment(
+  params : WhisperParams,
+  val : Int,
+) -> Unit = "whisper_params_set_single_segment"
+
+///|
+#borrow(params)
+extern "C" fn whisper_params_set_token_timestamps(
+  params : WhisperParams,
+  val : Int,
+) -> Unit = "whisper_params_set_token_timestamps"
+
+///|
+#borrow(params)
+extern "C" fn whisper_params_set_max_len(
+  params : WhisperParams,
+  val : Int,
+) -> Unit = "whisper_params_set_max_len"
+
+///|
+#borrow(params)
+extern "C" fn whisper_params_set_max_tokens(
+  params : WhisperParams,
+  val : Int,
+) -> Unit = "whisper_params_set_max_tokens"
+
+///|
+#borrow(params)
+extern "C" fn whisper_params_set_audio_ctx(
+  params : WhisperParams,
+  val : Int,
+) -> Unit = "whisper_params_set_audio_ctx"
+
+///|
+#borrow(params, prompt)
+extern "C" fn whisper_params_set_initial_prompt(
+  params : WhisperParams,
+  prompt : Bytes,
+) -> Unit = "whisper_params_set_initial_prompt"
+
+///|
+#borrow(params)
+extern "C" fn whisper_params_set_temperature(
+  params : WhisperParams,
+  val : Double,
+) -> Unit = "whisper_params_set_temperature"
+
+///|
+#borrow(params)
+extern "C" fn whisper_params_set_print_progress(
+  params : WhisperParams,
+  val : Int,
+) -> Unit = "whisper_params_set_print_progress"
+
+///|
+#borrow(params)
+extern "C" fn whisper_params_set_strategy(
+  params : WhisperParams,
+  val : Int,
+) -> Unit = "whisper_params_set_strategy"
+
+///|
+#borrow(params)
+extern "C" fn whisper_params_set_beam_size(
+  params : WhisperParams,
+  val : Int,
+) -> Unit = "whisper_params_set_beam_size"
+
+///|
+#borrow(params)
+extern "C" fn whisper_params_set_no_context(
+  params : WhisperParams,
+  val : Int,
+) -> Unit = "whisper_params_set_no_context"
+
+///|
+#borrow(params)
+extern "C" fn whisper_params_set_vad(
+  params : WhisperParams,
+  val : Int,
+) -> Unit = "whisper_params_set_vad"
+
+///|
+#borrow(params, path)
+extern "C" fn whisper_params_set_vad_model_path(
+  params : WhisperParams,
+  path : Bytes,
+) -> Unit = "whisper_params_set_vad_model_path"
+
+///|
+#borrow(params)
+extern "C" fn whisper_params_set_vad_threshold(
+  params : WhisperParams,
+  val : Double,
+) -> Unit = "whisper_params_set_vad_threshold"
+
+///|
+#borrow(params)
+extern "C" fn whisper_params_set_vad_min_speech_duration_ms(
+  params : WhisperParams,
+  val : Int,
+) -> Unit = "whisper_params_set_vad_min_speech_duration_ms"
+
+///|
+#borrow(params)
+extern "C" fn whisper_params_set_vad_min_silence_duration_ms(
+  params : WhisperParams,
+  val : Int,
+) -> Unit = "whisper_params_set_vad_min_silence_duration_ms"
+
+///|
+#borrow(params)
+extern "C" fn whisper_params_set_vad_max_speech_duration_s(
+  params : WhisperParams,
+  val : Double,
+) -> Unit = "whisper_params_set_vad_max_speech_duration_s"
+
+///|
+#borrow(params)
+extern "C" fn whisper_params_set_vad_speech_pad_ms(
+  params : WhisperParams,
+  val : Int,
+) -> Unit = "whisper_params_set_vad_speech_pad_ms"
+
+// --- Group 2: Model info / metadata ---
+
+///|
+#borrow(ctx)
+extern "C" fn whisper_ctx_is_multilingual(ctx : WhisperCtx) -> Int = "whisper_ctx_is_multilingual"
+
+///|
+#borrow(ctx)
+extern "C" fn whisper_ctx_n_vocab(ctx : WhisperCtx) -> Int = "whisper_ctx_n_vocab"
+
+///|
+#borrow(ctx)
+extern "C" fn whisper_ctx_n_text_ctx(ctx : WhisperCtx) -> Int = "whisper_ctx_n_text_ctx"
+
+///|
+#borrow(ctx)
+extern "C" fn whisper_ctx_n_audio_ctx(ctx : WhisperCtx) -> Int = "whisper_ctx_n_audio_ctx"
+
+///|
+#borrow(ctx)
+extern "C" fn whisper_ctx_model_type(ctx : WhisperCtx) -> Bytes = "whisper_ctx_model_type"
+
+///|
+extern "C" fn whisper_ctx_lang_max_id() -> Int = "whisper_ctx_lang_max_id"
+
+///|
+#borrow(lang)
+extern "C" fn whisper_ctx_lang_id(lang : Bytes) -> Int = "whisper_ctx_lang_id"
+
+///|
+extern "C" fn whisper_ctx_lang_str(id : Int) -> Bytes = "whisper_ctx_lang_str"
+
+// --- Group 3: Segment details / token info ---
+
+///|
+#borrow(ctx)
+extern "C" fn whisper_get_segment_no_speech_prob(
+  ctx : WhisperCtx,
+  i : Int,
+) -> Double = "whisper_get_segment_no_speech_prob"
+
+///|
+#borrow(ctx)
+extern "C" fn whisper_get_segment_speaker_turn(
+  ctx : WhisperCtx,
+  i : Int,
+) -> Int = "whisper_get_segment_speaker_turn"
+
+///|
+#borrow(ctx)
+extern "C" fn whisper_get_full_lang_id(ctx : WhisperCtx) -> Int = "whisper_get_full_lang_id"
+
+///|
+#borrow(ctx)
+extern "C" fn whisper_get_n_tokens(
+  ctx : WhisperCtx,
+  i_segment : Int,
+) -> Int = "whisper_get_n_tokens"
+
+///|
+#borrow(ctx)
+extern "C" fn whisper_get_token_text(
+  ctx : WhisperCtx,
+  i_segment : Int,
+  i_token : Int,
+) -> Bytes = "whisper_get_token_text"
+
+///|
+#borrow(ctx)
+extern "C" fn whisper_get_token_id(
+  ctx : WhisperCtx,
+  i_segment : Int,
+  i_token : Int,
+) -> Int = "whisper_get_token_id"
+
+///|
+#borrow(ctx)
+extern "C" fn whisper_get_token_prob(
+  ctx : WhisperCtx,
+  i_segment : Int,
+  i_token : Int,
+) -> Double = "whisper_get_token_prob"
+
+///|
+#borrow(ctx)
+extern "C" fn whisper_get_token_data_t0(
+  ctx : WhisperCtx,
+  i_segment : Int,
+  i_token : Int,
+) -> Int64 = "whisper_get_token_data_t0"
+
+///|
+#borrow(ctx)
+extern "C" fn whisper_get_token_data_t1(
+  ctx : WhisperCtx,
+  i_segment : Int,
+  i_token : Int,
+) -> Int64 = "whisper_get_token_data_t1"
+
+// --- Group 4: Performance / utility ---
+
+///|
+#borrow(ctx)
+extern "C" fn whisper_ctx_print_timings(ctx : WhisperCtx) -> Unit = "whisper_ctx_print_timings"
+
+///|
+#borrow(ctx)
+extern "C" fn whisper_ctx_reset_timings(ctx : WhisperCtx) -> Unit = "whisper_ctx_reset_timings"
+
+///|
+#borrow(ctx)
+extern "C" fn whisper_ctx_get_timings_sample_ms(ctx : WhisperCtx) -> Double = "whisper_ctx_get_timings_sample_ms"
+
+///|
+#borrow(ctx)
+extern "C" fn whisper_ctx_get_timings_encode_ms(ctx : WhisperCtx) -> Double = "whisper_ctx_get_timings_encode_ms"
+
+///|
+#borrow(ctx)
+extern "C" fn whisper_ctx_get_timings_decode_ms(ctx : WhisperCtx) -> Double = "whisper_ctx_get_timings_decode_ms"
+
+///|
+#borrow(ctx)
+extern "C" fn whisper_ctx_get_timings_batchd_ms(ctx : WhisperCtx) -> Double = "whisper_ctx_get_timings_batchd_ms"
+
+///|
+#borrow(ctx)
+extern "C" fn whisper_ctx_get_timings_prompt_ms(ctx : WhisperCtx) -> Double = "whisper_ctx_get_timings_prompt_ms"
+
+///|
+extern "C" fn whisper_get_system_info() -> Bytes = "whisper_get_system_info"
 
 // --- Environment ---
 
@@ -209,4 +499,252 @@ pub fn get_segment_t0(ctx : WhisperCtx, i : Int) -> Int64 {
 ///|
 pub fn get_segment_t1(ctx : WhisperCtx, i : Int) -> Int64 {
   whisper_get_segment_t1(ctx, i)
+}
+
+// --- Group 1: Params setters (pub) ---
+
+///|
+pub fn set_offset_ms(params : WhisperParams, val : Int) -> Unit {
+  whisper_params_set_offset_ms(params, val)
+}
+
+///|
+pub fn set_duration_ms(params : WhisperParams, val : Int) -> Unit {
+  whisper_params_set_duration_ms(params, val)
+}
+
+///|
+pub fn set_no_timestamps(params : WhisperParams, val : Bool) -> Unit {
+  whisper_params_set_no_timestamps(params, if val { 1 } else { 0 })
+}
+
+///|
+pub fn set_single_segment(params : WhisperParams, val : Bool) -> Unit {
+  whisper_params_set_single_segment(params, if val { 1 } else { 0 })
+}
+
+///|
+pub fn set_token_timestamps(params : WhisperParams, val : Bool) -> Unit {
+  whisper_params_set_token_timestamps(params, if val { 1 } else { 0 })
+}
+
+///|
+pub fn set_max_len(params : WhisperParams, val : Int) -> Unit {
+  whisper_params_set_max_len(params, val)
+}
+
+///|
+pub fn set_max_tokens(params : WhisperParams, val : Int) -> Unit {
+  whisper_params_set_max_tokens(params, val)
+}
+
+///|
+pub fn set_audio_ctx(params : WhisperParams, val : Int) -> Unit {
+  whisper_params_set_audio_ctx(params, val)
+}
+
+///|
+pub fn set_initial_prompt(params : WhisperParams, prompt : String) -> Unit {
+  whisper_params_set_initial_prompt(params, cstring(prompt))
+}
+
+///|
+pub fn set_temperature(params : WhisperParams, val : Double) -> Unit {
+  whisper_params_set_temperature(params, val)
+}
+
+///|
+pub fn set_print_progress(params : WhisperParams, val : Bool) -> Unit {
+  whisper_params_set_print_progress(params, if val { 1 } else { 0 })
+}
+
+///|
+pub fn set_strategy(params : WhisperParams, val : Int) -> Unit {
+  whisper_params_set_strategy(params, val)
+}
+
+///|
+pub fn set_beam_size(params : WhisperParams, val : Int) -> Unit {
+  whisper_params_set_beam_size(params, val)
+}
+
+///|
+pub fn set_no_context(params : WhisperParams, val : Bool) -> Unit {
+  whisper_params_set_no_context(params, if val { 1 } else { 0 })
+}
+
+///|
+pub fn set_vad(params : WhisperParams, val : Bool) -> Unit {
+  whisper_params_set_vad(params, if val { 1 } else { 0 })
+}
+
+///|
+pub fn set_vad_model_path(params : WhisperParams, path : String) -> Unit {
+  whisper_params_set_vad_model_path(params, cstring(path))
+}
+
+///|
+pub fn set_vad_threshold(params : WhisperParams, val : Double) -> Unit {
+  whisper_params_set_vad_threshold(params, val)
+}
+
+///|
+pub fn set_vad_min_speech_duration_ms(params : WhisperParams, val : Int) -> Unit {
+  whisper_params_set_vad_min_speech_duration_ms(params, val)
+}
+
+///|
+pub fn set_vad_min_silence_duration_ms(params : WhisperParams, val : Int) -> Unit {
+  whisper_params_set_vad_min_silence_duration_ms(params, val)
+}
+
+///|
+pub fn set_vad_max_speech_duration_s(params : WhisperParams, val : Double) -> Unit {
+  whisper_params_set_vad_max_speech_duration_s(params, val)
+}
+
+///|
+pub fn set_vad_speech_pad_ms(params : WhisperParams, val : Int) -> Unit {
+  whisper_params_set_vad_speech_pad_ms(params, val)
+}
+
+///|
+pub fn run_full_parallel(
+  ctx : WhisperCtx,
+  params : WhisperParams,
+  samples : WavSamples,
+  n_processors : Int,
+) -> Int {
+  whisper_run_full_parallel(ctx, params, samples, n_processors)
+}
+
+// --- Group 2: Model info (pub) ---
+
+///|
+pub fn is_multilingual(ctx : WhisperCtx) -> Bool {
+  whisper_ctx_is_multilingual(ctx) != 0
+}
+
+///|
+pub fn n_vocab(ctx : WhisperCtx) -> Int {
+  whisper_ctx_n_vocab(ctx)
+}
+
+///|
+pub fn n_text_ctx(ctx : WhisperCtx) -> Int {
+  whisper_ctx_n_text_ctx(ctx)
+}
+
+///|
+pub fn n_audio_ctx(ctx : WhisperCtx) -> Int {
+  whisper_ctx_n_audio_ctx(ctx)
+}
+
+///|
+pub fn model_type(ctx : WhisperCtx) -> String {
+  bytes_to_string(whisper_ctx_model_type(ctx))
+}
+
+///|
+pub fn lang_max_id() -> Int {
+  whisper_ctx_lang_max_id()
+}
+
+///|
+pub fn lang_id(lang : String) -> Int {
+  whisper_ctx_lang_id(cstring(lang))
+}
+
+///|
+pub fn lang_str(id : Int) -> String {
+  bytes_to_string(whisper_ctx_lang_str(id))
+}
+
+// --- Group 3: Segment details / token info (pub) ---
+
+///|
+pub fn get_segment_no_speech_prob(ctx : WhisperCtx, i : Int) -> Double {
+  whisper_get_segment_no_speech_prob(ctx, i)
+}
+
+///|
+pub fn get_segment_speaker_turn_next(ctx : WhisperCtx, i : Int) -> Bool {
+  whisper_get_segment_speaker_turn(ctx, i) != 0
+}
+
+///|
+pub fn get_full_lang_id(ctx : WhisperCtx) -> Int {
+  whisper_get_full_lang_id(ctx)
+}
+
+///|
+pub fn get_n_tokens(ctx : WhisperCtx, i_segment : Int) -> Int {
+  whisper_get_n_tokens(ctx, i_segment)
+}
+
+///|
+pub fn get_token_text(ctx : WhisperCtx, i_segment : Int, i_token : Int) -> String {
+  bytes_to_string(whisper_get_token_text(ctx, i_segment, i_token))
+}
+
+///|
+pub fn get_token_id(ctx : WhisperCtx, i_segment : Int, i_token : Int) -> Int {
+  whisper_get_token_id(ctx, i_segment, i_token)
+}
+
+///|
+pub fn get_token_prob(ctx : WhisperCtx, i_segment : Int, i_token : Int) -> Double {
+  whisper_get_token_prob(ctx, i_segment, i_token)
+}
+
+///|
+pub fn get_token_data_t0(ctx : WhisperCtx, i_segment : Int, i_token : Int) -> Int64 {
+  whisper_get_token_data_t0(ctx, i_segment, i_token)
+}
+
+///|
+pub fn get_token_data_t1(ctx : WhisperCtx, i_segment : Int, i_token : Int) -> Int64 {
+  whisper_get_token_data_t1(ctx, i_segment, i_token)
+}
+
+// --- Group 4: Performance / utility (pub) ---
+
+///|
+pub fn print_timings(ctx : WhisperCtx) -> Unit {
+  whisper_ctx_print_timings(ctx)
+}
+
+///|
+pub fn reset_timings(ctx : WhisperCtx) -> Unit {
+  whisper_ctx_reset_timings(ctx)
+}
+
+///|
+pub fn get_timings_sample_ms(ctx : WhisperCtx) -> Double {
+  whisper_ctx_get_timings_sample_ms(ctx)
+}
+
+///|
+pub fn get_timings_encode_ms(ctx : WhisperCtx) -> Double {
+  whisper_ctx_get_timings_encode_ms(ctx)
+}
+
+///|
+pub fn get_timings_decode_ms(ctx : WhisperCtx) -> Double {
+  whisper_ctx_get_timings_decode_ms(ctx)
+}
+
+///|
+pub fn get_timings_batchd_ms(ctx : WhisperCtx) -> Double {
+  whisper_ctx_get_timings_batchd_ms(ctx)
+}
+
+///|
+pub fn get_timings_prompt_ms(ctx : WhisperCtx) -> Double {
+  whisper_ctx_get_timings_prompt_ms(ctx)
+}
+
+///|
+pub fn system_info() -> String {
+  bytes_to_string(whisper_get_system_info())
 }
