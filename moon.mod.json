@@ -1,6 +1,6 @@
 {
-  "name": "mizchi/whisper-mbt",
-  "version": "0.1.1",
+  "name": "mizchi/whisper",
+  "version": "0.1.0",
   "deps": {
     "moonbitlang/x": "0.4.40"
   },
@@ -10,5 +10,5 @@
   "repository": "https://github.com/mizchi/whisper-mbt",
   "license": "MIT",
   "keywords": ["whisper", "speech-to-text", "native", "ffi"],
-  "description": "DEPRECATED: Use mizchi/whisper instead. MoonBit native bindings for whisper.cpp."
+  "description": "MoonBit native bindings for whisper.cpp speech-to-text inference"
 }

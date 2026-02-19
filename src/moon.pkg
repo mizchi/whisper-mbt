@@ -1,5 +1,5 @@
 import {
-  "mizchi/whisper-mbt/ffi",
+  "mizchi/whisper/ffi",
 }
 
 options(

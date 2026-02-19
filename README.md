@@ -1,4 +1,4 @@
-# whisper-mbt
+# whisper
 
 MoonBit native bindings for [whisper.cpp](https://github.com/ggml-org/whisper.cpp) — speech-to-text inference.
 
@@ -11,8 +11,8 @@ MoonBit native bindings for [whisper.cpp](https://github.com/ggml-org/whisper.cp
 ## Quick Start (standalone)
 
 ```bash
-git clone --recursive https://github.com/mizchi/whisper-mbt.git
-cd whisper-mbt
+git clone --recursive https://github.com/mizchi/whisper.git
+cd whisper
 
 # Build whisper.cpp and download model
 just setup
@@ -30,7 +30,7 @@ WHISPER_WAV=vendor/whisper.cpp/samples/jfk.wav \
 From mooncakes registry (when published):
 
 ```bash
-moon add mizchi/whisper-mbt
+moon add mizchi/whisper
 ```
 
 Or as a local path dependency in `moon.mod.json`:
@@ -39,8 +39,8 @@ Or as a local path dependency in `moon.mod.json`:
 {
   "name": "your/project",
   "deps": {
-    "mizchi/whisper-mbt": {
-      "path": "/path/to/whisper-mbt"
+    "mizchi/whisper": {
+      "path": "/path/to/whisper"
     }
   },
   "preferred-target": "native"
@@ -76,7 +76,7 @@ In your main package's `moon.pkg`, import the library and add link flags pointin
 ```
 // cmd/main/moon.pkg
 import {
-  "mizchi/whisper-mbt" @whisper,
+  "mizchi/whisper" @whisper,
 }
 
 options(

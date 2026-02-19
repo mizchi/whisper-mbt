@@ -1,7 +1,7 @@
 import {
   "moonbitlang/core/strconv",
-  "mizchi/whisper-mbt" @lib,
-  "mizchi/whisper-mbt/ffi" @ffi,
+  "mizchi/whisper" @lib,
+  "mizchi/whisper/ffi" @ffi,
 }
 
 options(
