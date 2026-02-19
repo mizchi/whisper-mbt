@@ -464,6 +464,80 @@ moonbit_bytes_t whisper_get_system_info(void) {
     return cstring_to_bytes(s);
 }
 
+// --- Tokenization ---
+
+int32_t whisper_ctx_token_count(struct whisper_context* ctx, moonbit_bytes_t text) {
+    char* s = bytes_to_cstring(text);
+    int count = whisper_token_count(ctx, s);
+    free(s);
+    return count;
+}
+
+// Returns a MoonBit FixedArray[Int] of token IDs.
+// On error, returns an empty array.
+int32_t* whisper_ctx_tokenize(struct whisper_context* ctx, moonbit_bytes_t text, int32_t max_tokens) {
+    char* s = bytes_to_cstring(text);
+    int count = whisper_token_count(ctx, s);
+    if (count <= 0) {
+        free(s);
+        return moonbit_make_int32_array(0, 0);
+    }
+    if (count > max_tokens) count = max_tokens;
+    whisper_token* tokens = (whisper_token*)malloc(count * sizeof(whisper_token));
+    int n = whisper_tokenize(ctx, s, tokens, count);
+    free(s);
+    if (n < 0) {
+        free(tokens);
+        return moonbit_make_int32_array(0, 0);
+    }
+    int32_t* result = moonbit_make_int32_array(n, 0);
+    for (int i = 0; i < n; i++) {
+        result[i] = tokens[i];
+    }
+    free(tokens);
+    return result;
+}
+
+// --- Language auto-detect ---
+
+moonbit_bytes_t whisper_ctx_lang_str_full(int32_t id) {
+    const char* s = whisper_lang_str_full(id);
+    return cstring_to_bytes(s);
+}
+
+// Convenience: load WAV -> pcm_to_mel -> lang_auto_detect
+// Returns detected language id, or -1 on error.
+// Also fills probs array if non-null.
+int32_t whisper_ctx_lang_auto_detect(struct whisper_context* ctx, wav_samples_t* samples, int32_t offset_ms, int32_t n_threads) {
+    if (!ctx || !samples || !samples->data) return -1;
+    int rc = whisper_pcm_to_mel(ctx, samples->data, samples->count, n_threads);
+    if (rc != 0) return -1;
+    int n_langs = whisper_lang_max_id() + 1;
+    float* probs = (float*)malloc(n_langs * sizeof(float));
+    int lang_id = whisper_lang_auto_detect(ctx, offset_ms, n_threads, probs);
+    free(probs);
+    return lang_id;
+}
+
+// Same as above but also returns probabilities for all languages.
+// Returns detected language id. probs_out is filled with (lang_max_id+1) doubles.
+// Caller provides a MoonBit FixedArray[Double] of appropriate size.
+int32_t whisper_ctx_lang_auto_detect_with_probs(struct whisper_context* ctx, wav_samples_t* samples, int32_t offset_ms, int32_t n_threads, double* probs_out) {
+    if (!ctx || !samples || !samples->data) return -1;
+    int rc = whisper_pcm_to_mel(ctx, samples->data, samples->count, n_threads);
+    if (rc != 0) return -1;
+    int n_langs = whisper_lang_max_id() + 1;
+    float* probs = (float*)malloc(n_langs * sizeof(float));
+    int lang_id = whisper_lang_auto_detect(ctx, offset_ms, n_threads, probs);
+    int out_len = Moonbit_array_length(probs_out);
+    int copy_len = out_len < n_langs ? out_len : n_langs;
+    for (int i = 0; i < copy_len; i++) {
+        probs_out[i] = (double)probs[i];
+    }
+    free(probs);
+    return lang_id;
+}
+
 // --- Environment variable access ---
 
 moonbit_bytes_t whisper_getenv(moonbit_bytes_t name) {

@@ -387,6 +387,44 @@ extern "C" fn whisper_ctx_get_timings_prompt_ms(ctx : WhisperCtx) -> Double = "w
 ///|
 extern "C" fn whisper_get_system_info() -> Bytes = "whisper_get_system_info"
 
+// --- Tokenization ---
+
+///|
+#borrow(ctx, text)
+extern "C" fn whisper_ctx_token_count(ctx : WhisperCtx, text : Bytes) -> Int = "whisper_ctx_token_count"
+
+///|
+#borrow(ctx, text)
+extern "C" fn whisper_ctx_tokenize(
+  ctx : WhisperCtx,
+  text : Bytes,
+  max_tokens : Int,
+) -> FixedArray[Int] = "whisper_ctx_tokenize"
+
+// --- Language detection ---
+
+///|
+extern "C" fn whisper_ctx_lang_str_full(id : Int) -> Bytes = "whisper_ctx_lang_str_full"
+
+///|
+#borrow(ctx, samples)
+extern "C" fn whisper_ctx_lang_auto_detect(
+  ctx : WhisperCtx,
+  samples : WavSamples,
+  offset_ms : Int,
+  n_threads : Int,
+) -> Int = "whisper_ctx_lang_auto_detect"
+
+///|
+#borrow(ctx, samples, probs_out)
+extern "C" fn whisper_ctx_lang_auto_detect_with_probs(
+  ctx : WhisperCtx,
+  samples : WavSamples,
+  offset_ms : Int,
+  n_threads : Int,
+  probs_out : FixedArray[Double],
+) -> Int = "whisper_ctx_lang_auto_detect_with_probs"
+
 // --- Environment ---
 
 ///|
@@ -747,4 +785,44 @@ pub fn get_timings_prompt_ms(ctx : WhisperCtx) -> Double {
 ///|
 pub fn system_info() -> String {
   bytes_to_string(whisper_get_system_info())
+}
+
+// --- Tokenization (pub) ---
+
+///|
+pub fn token_count(ctx : WhisperCtx, text : String) -> Int {
+  whisper_ctx_token_count(ctx, cstring(text))
+}
+
+///|
+pub fn tokenize(ctx : WhisperCtx, text : String, max_tokens : Int) -> FixedArray[Int] {
+  whisper_ctx_tokenize(ctx, cstring(text), max_tokens)
+}
+
+// --- Language detection (pub) ---
+
+///|
+pub fn lang_str_full(id : Int) -> String {
+  bytes_to_string(whisper_ctx_lang_str_full(id))
+}
+
+///|
+pub fn lang_auto_detect(
+  ctx : WhisperCtx,
+  samples : WavSamples,
+  offset_ms : Int,
+  n_threads : Int,
+) -> Int {
+  whisper_ctx_lang_auto_detect(ctx, samples, offset_ms, n_threads)
+}
+
+///|
+pub fn lang_auto_detect_with_probs(
+  ctx : WhisperCtx,
+  samples : WavSamples,
+  offset_ms : Int,
+  n_threads : Int,
+  probs_out : FixedArray[Double],
+) -> Int {
+  whisper_ctx_lang_auto_detect_with_probs(ctx, samples, offset_ms, n_threads, probs_out)
 }

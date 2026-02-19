@@ -136,6 +136,10 @@ WhisperContext::init(model_path : String) -> WhisperContext?
 WhisperContext::transcribe(self, wav_path, language?="en", translate?=false, n_threads?=4, ...) -> Array[Segment]
 WhisperContext::transcribe_parallel(self, wav_path, n_processors?=4, ...) -> Array[Segment]
 WhisperContext::get_tokens(self, segment_index) -> Array[TokenData]
+WhisperContext::token_count(self, text) -> Int
+WhisperContext::tokenize(self, text, max_tokens?=512) -> Array[Int]
+WhisperContext::detect_language(self, wav_path, n_threads?=4) -> String
+WhisperContext::detect_language_with_probs(self, wav_path, n_threads?=4) -> Array[LangProb]
 WhisperContext::model_info(self) -> ModelInfo
 WhisperContext::detected_language(self) -> String
 WhisperContext::get_timings(self) -> Timings
@@ -180,6 +184,28 @@ let segments = ctx.transcribe(
   language="auto",
   vad_model_path="models/ggml-silero-v5.1.2.bin",
 )
+```
+
+### Tokenization
+
+```moonbit
+let count = ctx.token_count("Hello world") // 2
+let ids = ctx.tokenize("Hello world")       // [15947, 1002]
+```
+
+### Language detection
+
+Auto-detect spoken language from audio without full transcription:
+
+```moonbit
+let lang = ctx.detect_language("audio.wav") // "en"
+
+// With probabilities for all languages
+let probs = ctx.detect_language_with_probs("audio.wav")
+for i = 0; i < probs.length(); i = i + 1 {
+  let p = probs[i]
+  println(p.lang + " (" + p.lang_full + "): " + p.prob.to_string())
+}
 ```
 
 ### Parallel inference

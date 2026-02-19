@@ -98,6 +98,42 @@ fn main {
         }
         println(token_str)
       }
+      // --- tokenize test ---
+      println("")
+      println("=== Tokenize ===")
+      let test_text = "Hello world"
+      let n_tokens = ctx.token_count(test_text)
+      println("token_count(\"" + test_text + "\"): " + n_tokens.to_string())
+      let token_ids = ctx.tokenize(test_text)
+      let mut ids_str = "token_ids: ["
+      for i = 0; i < token_ids.length(); i = i + 1 {
+        if i > 0 {
+          ids_str = ids_str + ", "
+        }
+        ids_str = ids_str + token_ids[i].to_string()
+      }
+      ids_str = ids_str + "]"
+      println(ids_str)
+      // --- language detect test ---
+      println("")
+      println("=== Language Detection ===")
+      let detected_lang = ctx.detect_language(wav_path)
+      println(
+        "detect_language: " +
+        detected_lang +
+        " (" +
+        @lib.lang_str_full(@lib.lang_id(detected_lang)) +
+        ")",
+      )
+      let probs = ctx.detect_language_with_probs(wav_path)
+      println("Top 5 language probabilities:")
+      let top = if probs.length() < 5 { probs.length() } else { 5 }
+      for i = 0; i < top; i = i + 1 {
+        let p = probs[i]
+        println(
+          "  " + p.lang + " (" + p.lang_full + "): " + p.prob.to_string(),
+        )
+      }
       println("")
       ctx.print_timings()
       let timings = ctx.get_timings()

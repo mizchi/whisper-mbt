@@ -391,6 +391,97 @@ pub fn WhisperContext::free(self : WhisperContext) -> Unit {
 }
 
 ///|
+pub struct LangProb {
+  lang : String
+  lang_full : String
+  prob : Double
+} derive(Show)
+
+///|
+pub fn WhisperContext::token_count(self : WhisperContext, text : String) -> Int {
+  @ffi.token_count(self.handle, text)
+}
+
+///|
+pub fn WhisperContext::tokenize(
+  self : WhisperContext,
+  text : String,
+  max_tokens? : Int = 512,
+) -> Array[Int] {
+  let fixed = @ffi.tokenize(self.handle, text, max_tokens)
+  let result : Array[Int] = []
+  for i = 0; i < fixed.length(); i = i + 1 {
+    result.push(fixed[i])
+  }
+  result
+}
+
+///|
+pub fn WhisperContext::detect_language(
+  self : WhisperContext,
+  wav_path : String,
+  n_threads? : Int = 4,
+) -> String {
+  let samples = @ffi.load_wav(wav_path)
+  match samples {
+    None => {
+      println("Error: failed to load WAV file: " + wav_path)
+      return ""
+    }
+    Some(s) => {
+      let lang_id = @ffi.lang_auto_detect(self.handle, s, 0, n_threads)
+      @ffi.free_samples(s)
+      if lang_id < 0 {
+        ""
+      } else {
+        @ffi.lang_str(lang_id)
+      }
+    }
+  }
+}
+
+///|
+pub fn WhisperContext::detect_language_with_probs(
+  self : WhisperContext,
+  wav_path : String,
+  n_threads? : Int = 4,
+) -> Array[LangProb] {
+  let samples = @ffi.load_wav(wav_path)
+  match samples {
+    None => {
+      println("Error: failed to load WAV file: " + wav_path)
+      return []
+    }
+    Some(s) => {
+      let n_langs = @ffi.lang_max_id() + 1
+      let probs = FixedArray::make(n_langs, 0.0)
+      let lang_id = @ffi.lang_auto_detect_with_probs(
+        self.handle, s, 0, n_threads, probs,
+      )
+      @ffi.free_samples(s)
+      ignore(lang_id)
+      let result : Array[LangProb] = []
+      for i = 0; i < n_langs; i = i + 1 {
+        if probs[i] > 0.0 {
+          result.push({
+            lang: @ffi.lang_str(i),
+            lang_full: @ffi.lang_str_full(i),
+            prob: probs[i],
+          })
+        }
+      }
+      result.sort_by(fn(a, b) { b.prob.compare(a.prob) })
+      result
+    }
+  }
+}
+
+///|
+pub fn lang_str_full(id : Int) -> String {
+  @ffi.lang_str_full(id)
+}
+
+///|
 pub fn lang_max_id() -> Int {
   @ffi.lang_max_id()
 }
