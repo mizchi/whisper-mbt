@@ -1,6 +1,6 @@
 {
   "name": "mizchi/whisper",
-  "version": "0.3.0",
+  "version": "0.3.1",
   "deps": {
     "moonbitlang/x": "0.4.40"
   },
