@@ -11,8 +11,8 @@ MoonBit native bindings for [whisper.cpp](https://github.com/ggml-org/whisper.cp
 ## Quick Start (standalone)
 
 ```bash
-git clone --recursive https://github.com/mizchi/whisper.git
-cd whisper
+git clone --recursive https://github.com/mizchi/whisper-mbt.git
+cd whisper-mbt
 
 # Build whisper.cpp and download model
 just setup
@@ -141,10 +141,32 @@ WhisperContext::tokenize(self, text, max_tokens?=512) -> Array[Int]
 WhisperContext::detect_language(self, wav_path, n_threads?=4) -> String
 WhisperContext::detect_language_with_probs(self, wav_path, n_threads?=4) -> Array[LangProb]
 WhisperContext::model_info(self) -> ModelInfo
-WhisperContext::detected_language(self) -> String
+WhisperContext::detected_language(self) -> String  // after transcribe()
 WhisperContext::get_timings(self) -> Timings
 WhisperContext::print_timings(self) -> Unit
 WhisperContext::free(self) -> Unit
+```
+
+### Utility functions
+
+```moonbit
+lang_id(lang : String) -> Int        // "en" -> 0
+lang_str(id : Int) -> String          // 0 -> "en"
+lang_str_full(id : Int) -> String     // 0 -> "english"
+lang_max_id() -> Int                  // max language id (98)
+system_info() -> String               // CPU/GPU feature info
+```
+
+### Types
+
+```moonbit
+struct Segment { text: String, t0: Int64, t1: Int64, no_speech_prob: Double, speaker_turn_next: Bool }
+struct TokenData { text: String, id: Int, prob: Double, t0: Int64, t1: Int64 }
+struct LangProb { lang: String, lang_full: String, prob: Double }
+struct ModelInfo { model_type: String, is_multilingual: Bool, n_vocab: Int, n_text_ctx: Int, n_audio_ctx: Int }
+struct Timings { sample_ms: Double, encode_ms: Double, decode_ms: Double, batchd_ms: Double, prompt_ms: Double }
+struct VadParams { threshold: Double, min_speech_duration_ms: Int, min_silence_duration_ms: Int, max_speech_duration_s: Double, speech_pad_ms: Int }
+enum Strategy { Greedy; BeamSearch }
 ```
 
 ### `transcribe` options
